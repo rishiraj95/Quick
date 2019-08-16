@@ -1,0 +1,10 @@
+ii=10
+u=ncread(fullfile(['../output_' num2str(ii) '.nc']),'u');
+v=ncread(fullfile(['../output_' num2str(ii) '.nc']),'v');
+vort=ncread(fullfile(['../output_' num2str(ii) '.nc']),'vorticity');
+KE=0.5*(u.^2+v.^2);
+ens2d=0.5*(vort.^2);
+part_x=ncread(fullfile(['../output_' num2str(ii) '.nc']),'particle_x_position');
+part_y=ncread(fullfile(['../output_' num2str(ii) '.nc']),'particle_y_position');
+KE_now=interp2(x,y,KE',part_x,part_y,'spline');
+ens_now=interp2(x,y,ens2d',part_x,part_y,'spline');
