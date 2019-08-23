@@ -1,4 +1,4 @@
-function [result, ismaxqclq] = Quick_cpy(G,X,candX,gamma,minsize)
+function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
 
     ismaxqclq=false;
     result={};
@@ -115,7 +115,7 @@ function [result, ismaxqclq] = Quick_cpy(G,X,candX,gamma,minsize)
 
 
         if LY<=UY && ~isempty(candY) && (length(Y)+length(candY))>minsize
-            [new_result, issuperqclq]=Quick_cpy(G,Y,candY,gamma,minsize);
+            [new_result, issuperqclq]=Quick(G,Y,candY,gamma,minsize);
 %             disp(['v' num2str(v)])
 %                 disp('new_result')
 %                 for k=1:length(new_result)
