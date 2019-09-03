@@ -74,7 +74,11 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
             LY=0;UY=0;
         end
         Z=1;
+        
+        %Printing the lower bound and upper bound to see how many nodes got pruned from the candidate extension
         sprintf(['LY= ',num2str(LY),' UY= ',num2str(UY),'\n'])
+        
+        %Perform some iterative graph theory checks to see if the current set can be extended any longer
         while LY<=UY && ~isempty(candY) && ~isempty(Z)
             
             for j=1:length(Y)
@@ -113,9 +117,11 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
             end
         end
 
-
+        %Only if the following conditions satisfy there is a chance of potential extension of Y, hence we perform recursion.
         if LY<=UY && ~isempty(candY) && (length(Y)+length(candY))>minsize
             [new_result, issuperqclq]=Quick(G,Y,candY,gamma,minsize);
+
+% Following code is to check at runtime the outputs at different parts of the execution.
 %             disp(['v' num2str(v)])
 %                 disp('new_result')
 %                 for k=1:length(new_result)
@@ -124,6 +130,7 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
             ismaxqclq=ismaxqclq | issuperqclq;
             if length(Y)>minsize && checkqclq(Y,G,gamma) && ~issuperqclq
                 ismaxqclq=true;
+% Following code is to check at runtime the outputs at different parts of the execution.
 %                new_result={Y};
 %                 disp(['v' num2str(v)])
 %                 disp('new_result')
@@ -134,6 +141,7 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
             
         end
         
+% Following code is to check at runtime the outputs at different parts of the execution.
 %         disp(['v' num2str(v)])
 %         disp('result')
 %                 for k=1:length(result)
@@ -141,9 +149,10 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
 %                 end 
         
         
-            
+% Return current result to previous call            
             if ~isempty(new_result)
                 result(length(result)+1:length(result)+length(new_result))=new_result;
+% Following code is to check at runtime the outputs at different parts of the execution.
 %                 disp(['v' num2str(v)])
 %                 disp('result')
 %                 for k=1:length(new_result)

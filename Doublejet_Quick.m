@@ -1,28 +1,31 @@
 %% This code is a tutorial code for application of the QUICK dense sub-cluster algorithm
 
-% uncoimment if you want to clear graphics and workspace
+% uncomment if you want to clear graphics and workspace
 %clear all, close all
 
 
 % These paramaters set the output at which we want to see the clusters
 tout=50;
-% This is for finding the clusters, and sets the number of clusters you want to find
+% This is for finding the clusters, and sets the number of clusters you want to find in descending order of size
 lbin=6;
 % This sets the data directory
 %data_dir='/RAID2/mmstastn/aguos_particles/output_grid_ip_eps40/';
 data_dir='/RAID2/mmstastn/aguos_particles/';
 %data_dir='/RAID2/mmstastn/aguos_particles/output_grid_eps40/';
-% set the number of particles and initialize matrix
+
+% Read the number of particles from an output file 
 numps=ncread(fullfile([data_dir 'output_101.nc']),'num_particles');
 numps=double(numps);
+%Initialize adjacency matrix
 cum_adjmat=sparse(numps,numps);
 
-% loop over outputs to cacluate the cumulative adjacency matrix
+% Loop over outputs to cacluate the cumulative adjacency matrix
 for ii=1:tout
   load(fullfile('../Adjacency/eps_40%',['adjmat_' num2str(ii) '.mat']));
   %load(fullfile('../Adjacency/eps_60%',['adjmat_' num2str(ii) '.mat']));
   cum_adjmat=double(cum_adjmat|myadj);
 end
+% Diagonal enties should be zero
 cum_adjmat=cum_adjmat-diag(diag(cum_adjmat));
 % build the graph
 G=graph(cum_adjmat);
@@ -45,7 +48,10 @@ end
 partnow=startbinsi{1};
 %}
 %% This assumes you've done and stored the computation already
+
+% Loading the 'cluster.mat' file generates the variable 'partnow'
 load('cluster1_eps40.mat');
+%Create the subgraph for the cumulative cluster
 Gnow=subgraph(G,partnow);
 disp(length(partnow));
 % These are the key parameters for the Quick algorithm
@@ -58,7 +64,8 @@ deg=degree(Gnow);
 candX=find(deg>=(gamma*(minsize-1)));
 
 [result,check]=Quick(Gnow,X,candX,gamma,minsize);
-% add a commented out save command here
+% To save the result
+%save('result_name.mat','result')
 
 %% This is for plotting
 ii=50;
