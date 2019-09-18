@@ -63,12 +63,16 @@ X=[];
 deg=degree(Gnow);
 candX=find(deg>=(gamma*(minsize-1)));
 
+tic
 [result,check]=Quick(Gnow,X,candX,gamma,minsize);
+toc
+
+
 % To save the result
 %save('result_name.mat','result')
 
 %% This is for plotting
-ii=50;
+%{ii=50;
 part_x=ncread(fullfile('../',['output_' num2str(ii) '.nc']),'particle_x_position');
 part_y=ncread(fullfile('../',['output_' num2str(ii) '.nc']),'particle_y_position');
 figure(2)
@@ -82,4 +86,4 @@ plot(part_x(ploti),part_y(ploti),'bo','MarkerSize',6)
 grid on
 end
 drawnow
-
+%}
