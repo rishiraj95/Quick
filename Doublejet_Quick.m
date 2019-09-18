@@ -63,12 +63,50 @@ X=[];
 deg=degree(Gnow);
 candX=find(deg>=(gamma*(minsize-1)));
 
-[result,check]=Quick(Gnow,X,candX,gamma,minsize);
+% Split Gnow into connected components
+
+splitG = subgraph(Gnow,candX); 
+parbins=conncomp(splitG);
+lbin=0;
+maxbins=max(parbins);
+
+% Find the disconnected bins from the graph
+for i=1:maxbins
+    binpop(i)=sum(parbins==i);
+    if binpop(i)>=minsize
+        lbin=lbin+1;
+    end
+end
+%parbinsi is a cell array with each cell containing particles of one connected component
+parbinsi=cell(lbin,1);
+[binsort,binsorti]=sort(binpop,'descend');
+
+for topi=1:lbin
+ binnowi=find(parbins==binsorti(topi));
+ parbinsi{topi}=binnowi;
+end
+
+result={};
+
+%Send the disconnected bins to Quick sequentially first
+for k=1:1
+    sendG = subgraph(splitG,parbinsi{k});
+    sendCandX = 1:sendG.numnodes;
+    res_union=[];
+    tic
+    [tempres,check]=Quick(sendG,[],sendCandX,gamma,minsize,res_union);
+    toc
+    for cntr=1:length(tempres)
+        result{end+cntr}=candX(parbinsi{k}(tempres{cntr}));
+    end
+end
+
+
 % To save the result
 %save('result_name.mat','result')
 
 %% This is for plotting
-ii=50;
+%{ii=50;
 part_x=ncread(fullfile('../',['output_' num2str(ii) '.nc']),'particle_x_position');
 part_y=ncread(fullfile('../',['output_' num2str(ii) '.nc']),'particle_y_position');
 figure(2)
@@ -82,4 +120,4 @@ plot(part_x(ploti),part_y(ploti),'bo','MarkerSize',6)
 grid on
 end
 drawnow
-
+%}
