@@ -1,4 +1,4 @@
-function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
+function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize,res_union)
 
     ismaxqclq=false;
     result={};
@@ -34,7 +34,7 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
 
     %Put Cu_final elements at the end of candX
     candX_nocover=setdiff(candX,Cu_final);
-   % disp([size(candX_nocover),size(Cu_final)])
+    disp(candX_nocover);
     
     %Vertical concat to put cover vertex set at the end of candX
     candX=[candX_nocover;Cu_final];
@@ -48,12 +48,15 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
             return
         end
         v=candX_nocover(i);
+        if ismember(v, res_union)
+            continue
+        end
+        disp(['v ', num2str(v)]);
         %Look ahead technique-check if union(X,candX) is a quasi clique
         X_union_candX=union(X,candX);
         if checkqclq(X_union_candX,G,gamma)
             new_result={X_union_candX};
 %             disp(['v' num2str(v)])
-%                 disp('result')
 %                 for k=1:length(new_result)
 %                     disp(new_result{k})
 %                end
@@ -76,7 +79,7 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
         Z=1;
         
         %Printing the lower bound and upper bound to see how many nodes got pruned from the candidate extension
-        sprintf(['LY= ',num2str(LY),' UY= ',num2str(UY),'\n'])
+        %sprintf(['LY= ',num2str(LY),' UY= ',num2str(UY),'\n'])
         
         %Perform some iterative graph theory checks to see if the current set can be extended any longer
         while LY<=UY && ~isempty(candY) && ~isempty(Z)
@@ -107,7 +110,7 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
             else
                 Z=candY((indeg_candY+exdeg_candY<gamma*(length(Y)+exdeg_candY))|(indeg_candY+UY-1<gamma*(length(Y)+UY-1))|(indeg_candY+exdeg_candY<gamma*(length(Y)+LY-1)));
                 candY=setdiff(candY,Z);
-                sprintf(['Z= ' num2str(Z')]) 
+               % sprintf(['Z= ' num2str(Z')]) 
             end
             
             if ~isempty(candY)
@@ -119,14 +122,14 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
 
         %Only if the following conditions satisfy there is a chance of potential extension of Y, hence we perform recursion.
         if LY<=UY && ~isempty(candY) && (length(Y)+length(candY))>minsize
-            [new_result, issuperqclq]=Quick(G,Y,candY,gamma,minsize);
+            [new_result, issuperqclq]=Quick(G,Y,candY,gamma,minsize,res_union);
 
 % Following code is to check at runtime the outputs at different parts of the execution.
-%             disp(['v' num2str(v)])
-%                 disp('new_result')
-%                 for k=1:length(new_result)
-%                     disp(new_result{k})
-%                 end
+             disp(['v' num2str(v)])
+
+                 for k=1:length(new_result)
+                     disp(new_result{k})
+                 end
             ismaxqclq=ismaxqclq | issuperqclq;
             if length(Y)>minsize && checkqclq(Y,G,gamma) && ~issuperqclq
                 ismaxqclq=true;
@@ -142,25 +145,32 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize)
         end
         
 % Following code is to check at runtime the outputs at different parts of the execution.
-%         disp(['v' num2str(v)])
-%         disp('result')
-%                 for k=1:length(result)
-%                     disp(result{k})
-%                 end 
+%{         
+                 disp(['v' num2str(v)])
+                 for k=1:length(result)
+                     disp(result{k})
+                 end 
         
-        
+%}
+
 % Return current result to previous call            
             if ~isempty(new_result)
                 result(length(result)+1:length(result)+length(new_result))=new_result;
+                
+% Calculate the union of all the particles added
+                for idx=1:length(new_result)
+                    res_union=union(res_union,new_result{idx});
+                end
 % Following code is to check at runtime the outputs at different parts of the execution.
-%                 disp(['v' num2str(v)])
-%                 disp('result')
-%                 for k=1:length(new_result)
-%                     disp(new_result{k})
-%                 end
-                    
+
+%{
+                 disp(['v' num2str(v)])
+                 for k=1:length(new_result)
+                     disp(new_result{k})
+                 end
+%}                    
             end
-        
+           % disp(res_union)      
     end
 end
             
