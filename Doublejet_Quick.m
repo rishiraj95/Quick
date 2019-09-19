@@ -59,12 +59,13 @@ minsize=20;
 gamma=0.3;
 
 % This is what you need to make Quick run
+res_union=[]
 X=[];
 deg=degree(Gnow);
 candX=find(deg>=(gamma*(minsize-1)));
 
 tic
-[result,check]=Quick(Gnow,X,candX,gamma,minsize);
+[result,check]=Quick(Gnow,X,candX,gamma,minsize,res_union);
 toc
 
 
