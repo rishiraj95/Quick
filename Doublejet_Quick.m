@@ -64,10 +64,11 @@ X=[];
 deg=degree(Gnow);
 candX=find(deg>=(gamma*(minsize-1)));
 
+profile on
 tic
 [result,check]=Quick(Gnow,X,candX,gamma,minsize,res_union);
 toc
-
+profile viewer
 
 % To save the result
 %save('result_name.mat','result')
