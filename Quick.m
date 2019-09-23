@@ -34,7 +34,7 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize,res_union)
 
     %Put Cu_final elements at the end of candX
     candX_nocover=setdiff(candX,Cu_final);
-    disp(candX_nocover);
+    %disp(candX_nocover);
     
     %Vertical concat to put cover vertex set at the end of candX
     candX=[candX_nocover;Cu_final];
@@ -51,7 +51,7 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize,res_union)
         if ismember(v, res_union)
             continue
         end
-        disp(['v ', num2str(v)]);
+       % disp(['v ', num2str(v)]);
         %Look ahead technique-check if union(X,candX) is a quasi clique
         X_union_candX=union(X,candX);
         if checkqclq(X_union_candX,G,gamma)
@@ -125,14 +125,17 @@ function [result, ismaxqclq] = Quick(G,X,candX,gamma,minsize,res_union)
             [new_result, issuperqclq]=Quick(G,Y,candY,gamma,minsize,res_union);
 
 % Following code is to check at runtime the outputs at different parts of the execution.
-             disp(['v' num2str(v)])
+%{
+                disp(['v' num2str(v)])
 
                  for k=1:length(new_result)
                      disp(new_result{k})
                  end
+%}
             ismaxqclq=ismaxqclq | issuperqclq;
             if length(Y)>minsize && checkqclq(Y,G,gamma) && ~issuperqclq
                 ismaxqclq=true;
+
 % Following code is to check at runtime the outputs at different parts of the execution.
 %                new_result={Y};
 %                 disp(['v' num2str(v)])

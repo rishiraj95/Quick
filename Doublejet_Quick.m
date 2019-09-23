@@ -1,7 +1,7 @@
 %% This code is a tutorial code for application of the QUICK dense sub-cluster algorithm
 
 % uncomment if you want to clear graphics and workspace
-%clear all, close all
+clear all, close all
 
 
 % These paramaters set the output at which we want to see the clusters
@@ -26,7 +26,7 @@ for ii=1:tout
   cum_adjmat=double(cum_adjmat|myadj);
 end
 % Diagonal enties should be zero
-cum_adjmat=cum_adjmat-diag(diag(cum_adjmat));
+%cum_adjmat=cum_adjmat-diag(diag(cum_adjmat));
 % build the graph
 G=graph(cum_adjmat);
 %% This is for computing the clusters live
@@ -87,10 +87,10 @@ for topi=1:lbin
 end
 
 result={};
-
 %Send the disconnected bins to Quick sequentially first
 for k=1:1
-    sendG = subgraph(splitG,parbinsi{k});
+    sendG = subgraph(Gnow,candX(parbinsi{k}));
+    %plot(sendG)
     sendCandX = 1:sendG.numnodes;
     res_union=[];
     tic
@@ -106,7 +106,8 @@ end
 %save('result_name.mat','result')
 
 %% This is for plotting
-%{ii=50;
+%{
+ii=50;
 part_x=ncread(fullfile('../',['output_' num2str(ii) '.nc']),'particle_x_position');
 part_y=ncread(fullfile('../',['output_' num2str(ii) '.nc']),'particle_y_position');
 figure(2)
