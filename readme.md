@@ -29,5 +29,5 @@ The pdf file is attached as "Quasi_Clique.pdf"
 
 ### Fast computation in parallel
 
-To make Quick work fast, check out the branch rishi_makefast. Here a cluster is split into small components and Quick is made to run parallel on all the small components. This splitting is possible because extracting the subgraph of valid nodes (that satisfy clique criteria) from the connected graph, makes it disconnected. On top of that, the logic works because you cannot exect to find neighbours of a node in a quasi-clique from a disconnected part in the subgraph.
+To make Quick work fast, check out the branch rishi_makefast. Here a cluster is split into small components and Quick is made to run parallel on all the small components. This splitting is possible because extracting the subgraph of valid nodes (that satisfy clique criteria) from the connected graph, makes it disconnected. On top of that, the logic works because you cannot expect to find neighbours of a node in a quasi-clique from a disconnected part in the subgraph.
 
