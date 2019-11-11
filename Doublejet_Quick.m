@@ -86,27 +86,37 @@ for topi=1:lbin
  parbinsi{topi}=binnowi;
 end
 
-result={};
+result_mat=cell(length(parbinsi),1);
 %Send the disconnected bins to Quick sequentially first
-for k=1:1
+tic
+parfor k=1:length(parbinsi)
     sendG = subgraph(Gnow,candX(parbinsi{k}));
     %plot(sendG)
     sendCandX = 1:sendG.numnodes;
     res_union=[];
-    tic
     [tempres,check]=Quick(sendG,[],sendCandX,gamma,minsize,res_union);
-    toc
     for cntr=1:length(tempres)
-        result{end+cntr}=candX(parbinsi{k}(tempres{cntr}));
+        tempres{cntr}=candX(parbinsi{k}(tempres{cntr}));
+    end
+    result_mat{k,1}=tempres;
+end
+toc
+
+result={};
+%Flatten the results
+for i=1:length(result_mat)
+    if ~isempty(result_mat{i})
+        for j=1:length(result_mat{i})
+            result{end+1}=result_mat{i}{j};
+        end
     end
 end
-
 
 % To save the result
 %save('result_name.mat','result')
 
 %% This is for plotting
-%{
+
 ii=50;
 part_x=ncread(fullfile('../',['output_' num2str(ii) '.nc']),'particle_x_position');
 part_y=ncread(fullfile('../',['output_' num2str(ii) '.nc']),'particle_y_position');
@@ -121,4 +131,4 @@ plot(part_x(ploti),part_y(ploti),'bo','MarkerSize',6)
 grid on
 end
 drawnow
-%}
+
